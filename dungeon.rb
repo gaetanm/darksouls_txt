@@ -10,7 +10,33 @@ class Dungeon
   def initialize(rooms_nbr)
     @rooms_nbr = rooms_nbr
     @rooms = []
+    generate_rooms
   end
+
+  def all_x_points
+    @rooms.map(&:position).map(&:x)
+  end
+
+  def all_y_points
+    @rooms.map(&:position).map(&:y)
+  end
+
+  def last_room_position
+    @rooms.last.position
+  end
+
+  def first_room_position
+    @rooms.first.position
+  end
+
+  def random_room_position(positions_to_avoid)
+    position = @rooms.map(&:position).sample
+    return position unless positions_to_avoid.include? positions_to_avoid
+
+    random_room_position(positions_to_avoid)
+  end
+
+  private
 
   def generate_rooms
     current_room_position = Position.new(0, 0)
@@ -28,16 +54,6 @@ class Dungeon
       return found_position if found_position
     end
   end
-
-  def all_x_points
-    @rooms.map(&:position).map(&:x)
-  end
-
-  def all_y_points
-    @rooms.map(&:position).map(&:y)
-  end
-
-  private
 
   def connect_rooms
     @rooms.each do |room|

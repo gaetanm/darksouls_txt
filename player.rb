@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
-class Player
-  attr_reader :health, :attack
+require_relative 'game_element'
+
+class Player < GameElement
 end
