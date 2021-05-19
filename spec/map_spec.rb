@@ -33,5 +33,15 @@ RSpec.describe Map do
         expect(draw.scan(Map::WEAPON_IMG).size).to eq(1)
       end
     end
+
+    context 'when a room is visited' do
+      before { dungeon.rooms.last.visited = true }
+
+      it 'show the room as visited' do
+        expect(draw.scan(Map::VISITED_ROOM_IMG).size).to eq(1)
+        expect(draw.scan(Map::UNVISITED_ROOM_IMG).size).to eq(room_nbr - 2)
+        expect(draw.scan(Map::PLAYER_IMG).size).to eq(1)
+      end
+    end
   end
 end

@@ -57,6 +57,10 @@ class Map
   end
 
   def draw_room(position)
-    @dungeon.rooms.map(&:position).include?(position) ? UNVISITED_ROOM_IMG : EMPTY_ROOM_IMG
+    if (room = @dungeon.rooms.find { |room| room.position == position })
+      room.visited ? VISITED_ROOM_IMG : UNVISITED_ROOM_IMG
+    else
+      EMPTY_ROOM_IMG
+    end
   end
 end
