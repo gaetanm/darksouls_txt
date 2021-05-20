@@ -8,8 +8,9 @@ require_relative 'player'
 require_relative 'weapon'
 
 class Game
-  ROOMS_NBR = 20
+  ROOMS_NBR = 10
   MOVING_INPUT = %w[right left top bottom].freeze
+  CHOICE_INPUT = %w[yes no].freeze
 
   def initialize
     @dungeon = Dungeon.new(ROOMS_NBR)
@@ -20,6 +21,7 @@ class Game
     @possible_choices = possible_directions
     @instruction = "Where to go? (#{@possible_choices.join('/')})"
     @screen = @map.draw
+    @action = :moving
   end
 
   def calculate_directions(current_position, position)
@@ -44,8 +46,11 @@ class Game
   end
 
   def handle_input(input)
-    if MOVING_INPUT.include? input
+    if MOVING_INPUT.include?(input) && @action == :moving
       handle_moving(input)
+    end
+    if CHOICE_INPUT.include?(input) && @action == :equipping
+      handle_equipping(input)
     end
   end
 
@@ -56,6 +61,7 @@ class Game
 
       system("clear") || system("cls")
       handle_input(input) if @possible_choices.include?(input)
+      refresh_screen
     end
   end
 
@@ -63,11 +69,33 @@ class Game
     @screen = @map.draw
   end
 
+  def handle_equipping(input)
+    if input == 'yes'
+      @possible_choices = possible_directions
+      @instruction = "You can now kill the boss!\n Where to go? (#{@possible_choices.join('/')})"
+    else
+      @instruction = "#{@boss.name} will kick your ass for sure!\n Where to go? (#{@possible_choices.join('/')})"
+    end
+    @action = :moving
+    @possible_choices = possible_directions
+  end
+
   def handle_moving(input)
     @player.walk(input)
+    return if collision?
+
     @dungeon.mark_room_as_visited(@player.position)
-    refresh_screen
     @possible_choices = possible_directions
     @instruction = "Where to go? (#{@possible_choices.join('/')})"
+  end
+
+  def collision?
+    if @player.position == @weapon.position
+      @action = :equipping
+      @possible_choices = CHOICE_INPUT
+      @instruction = "You just found the #{@weapon.name}! Equip? (#{@possible_choices.join('/')})"
+    else
+      false
+    end
   end
 end
