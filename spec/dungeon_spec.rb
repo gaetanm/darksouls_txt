@@ -13,7 +13,7 @@ RSpec.describe Dungeon do
     end
 
     it 'cannot generate are room which is not connected to another' do
-      expect(dungeon.rooms.map(&:around_rooms_ids)).not_to include nil
+      expect(dungeon.rooms.map(&:around_rooms_positions)).not_to include nil
     end
 
     it 'generates room with uniq position' do
@@ -29,6 +29,17 @@ RSpec.describe Dungeon do
 
     it 'gives a random room position that is not a position to avoid' do
       expect(positions_to_avoid).not_to include(random_room_position)
+    end
+  end
+
+  describe '#room_from_position' do
+    subject(:room_from_position) { dungeon.room_from_position(room_position) }
+
+    let(:room) { dungeon.rooms[0] }
+    let(:room_position) { dungeon.rooms[0].position }
+
+    it 'returns the room having the given position' do
+      expect(room_from_position).to eq(room)
     end
   end
 end

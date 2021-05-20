@@ -5,7 +5,7 @@ require_relative 'game'
 class Map
   UNVISITED_ROOM_IMG = '[ x ]'
   VISITED_ROOM_IMG = '[   ]'
-  EMPTY_ROOM_IMG = '     '
+  EMPTY_ROOM_IMG = '|||||'
   PLAYER_IMG = '[\o/]'
   WEAPON_IMG = '[ W ]'
   BOSS_IMG = '[ B ]'
@@ -22,11 +22,11 @@ class Map
     map = ''
     all_x = @dungeon.all_x_points
     all_y = @dungeon.all_y_points
-    current_x = all_x.min
-    (all_x.min..all_x.max).each do |x|
-      (all_y.min..all_y.max).each do |y|
-        map += draw_line(Position.new(x, y), current_x)
-        current_x = x
+    current_y = all_y.max
+    (all_y.min..all_y.max).to_a.reverse.each do |y|
+      (all_x.min..all_x.max).each do |x|
+        map += draw_line(Position.new(x, y), current_y)
+        current_y = y
       end
     end
     map
@@ -34,9 +34,9 @@ class Map
 
   private
 
-  def draw_line(position, current_x)
+  def draw_line(position, current_y)
     line = ''
-    line += "\n" if position.x != current_x
+    line += "\n" if position.y != current_y
     line += draw_room_or_player(position)
     line
   end
@@ -57,7 +57,7 @@ class Map
   end
 
   def draw_room(position)
-    if (room = @dungeon.rooms.find { |room| room.position == position })
+    if (room = @dungeon.room_from_position(position))
       room.visited ? VISITED_ROOM_IMG : UNVISITED_ROOM_IMG
     else
       EMPTY_ROOM_IMG

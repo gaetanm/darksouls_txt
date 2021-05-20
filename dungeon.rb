@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'position'
 require_relative 'room'
-
-Position = Struct.new(:x, :y)
 
 class Dungeon
   attr_reader :rooms
@@ -11,6 +10,14 @@ class Dungeon
     @rooms_nbr = rooms_nbr
     @rooms = []
     generate_rooms
+  end
+
+  def mark_room_as_visited(position)
+    room_from_position(position).visited = true
+  end
+
+  def room_from_position(position)
+    @rooms.find { |room| room.position == position }
   end
 
   def all_x_points
@@ -57,7 +64,7 @@ class Dungeon
 
   def connect_rooms
     @rooms.each do |room|
-      room.around_rooms_ids = rooms_around(room.position).map(&:id)
+      room.around_rooms_positions = rooms_around(room.position).map(&:position)
     end
   end
 
