@@ -10,12 +10,12 @@ class Map
   WEAPON_IMG = '[ W ]'
   BOSS_IMG = '[ B ]'
 
-  def initialize(dungeon, player_position, boss_position, weapon_position, game_mode)
+  def initialize(dungeon, player_position, boss_position, weapon, game_mode)
     @game_mode = game_mode
     @dungeon = dungeon
     @player_position = player_position
     @boss_position = boss_position
-    @weapon_position = weapon_position
+    @weapon = weapon
   end
 
   def draw
@@ -47,8 +47,8 @@ class Map
     case position
     when @player_position
       PLAYER_IMG
-    when @weapon_position
-      WEAPON_IMG
+    when @weapon.position
+      @weapon.equipped == true ? draw_room(position) : WEAPON_IMG
     when @boss_position
       BOSS_IMG
     else

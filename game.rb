@@ -17,7 +17,7 @@ class Game
     @player = Player.new(@dungeon.first_room_position.clone, 'Undead')
     @weapon = Weapon.new(@dungeon.random_room_position([@player.position]).clone)
     @boss = Boss.new(@dungeon.random_room_position([@player.position, @weapon.position].clone))
-    @map = Map.new(@dungeon, @player.position, @boss.position, @weapon.position, :debug)
+    @map = Map.new(@dungeon, @player.position, @boss.position, @weapon, :debug)
     @possible_choices = possible_directions
     @instruction = "Where to go? (#{@possible_choices.join('/')})"
     @screen = @map.draw
@@ -46,45 +46,42 @@ class Game
   end
 
   def handle_input(input)
-    if MOVING_INPUT.include?(input) && @action == :moving
-      handle_moving(input)
-    end
-    if CHOICE_INPUT.include?(input) && @action == :equipping
-      handle_equipping(input)
-    end
+    handle_moving(input) if MOVING_INPUT.include?(input) && @action == :moving
+    handle_equipping(input) if CHOICE_INPUT.include?(input) && @action == :equipping
   end
 
   def start
-    system("clear") || system("cls")
-    while input = Readline.readline("#{@screen}\n#{@instruction} ", true)
+    help = '\\o/: YOU [ x ]: Unvisited room [   ]: Visited room'
+    refresh_screen
+    while input = Readline.readline("#{help}\n\n#{@screen}\n\n#{@instruction} ", true)
       break if input == 'exit'
 
-      system("clear") || system("cls")
       handle_input(input) if @possible_choices.include?(input)
       refresh_screen
     end
   end
 
   def refresh_screen
+    system('clear') || system('cls')
     @screen = @map.draw
   end
 
   def handle_equipping(input)
+    @possible_choices = possible_directions
     if input == 'yes'
-      @possible_choices = possible_directions
-      @instruction = "You can now kill the boss!\n Where to go? (#{@possible_choices.join('/')})"
+      @instruction = "You can now kill the boss!\nWhere to go? (#{@possible_choices.join('/')})"
+      @weapon.equipped = true
     else
-      @instruction = "#{@boss.name} will kick your ass for sure!\n Where to go? (#{@possible_choices.join('/')})"
+      @instruction = "#{@boss.name} will kick your ass for sure!\nWhere to go? (#{@possible_choices.join('/')})"
     end
     @action = :moving
-    @possible_choices = possible_directions
   end
 
   def handle_moving(input)
     @player.walk(input)
+    @dungeon.mark_room_as_visited(@player.position)
     return if collision?
 
-    @dungeon.mark_room_as_visited(@player.position)
     @possible_choices = possible_directions
     @instruction = "Where to go? (#{@possible_choices.join('/')})"
   end
