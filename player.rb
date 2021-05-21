@@ -4,6 +4,12 @@ require_relative 'position'
 require_relative 'game_element'
 
 class Player < GameElement
+  def fight(weapon_equipped)
+    return 'Yay you won!' if weapon_equipped
+
+    rand(2).zero? ? 'YOU DIED!' : 'Yay you won!'
+  end
+
   def walk(direction)
     case direction
     when 'right'
@@ -14,8 +20,6 @@ class Player < GameElement
       @position.y = position.y + 1
     when 'bottom'
       @position.y = position.y - 1
-    else
-      'woot?'
     end
   end
 end

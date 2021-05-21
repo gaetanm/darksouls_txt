@@ -7,11 +7,9 @@ require_relative 'boss'
 require_relative 'player'
 require_relative 'weapon'
 require_relative 'direction_service'
+require_relative 'action_handler'
 
 class Game
-  MOVING_INPUT = %w[right left top bottom].freeze
-  CHOICE_INPUT = %w[yes no].freeze
-
   def self.start(room_nbr)
     return unless bootable?(room_nbr)
 
@@ -27,19 +25,17 @@ class Game
 
   def initialize(room_nbr)
     boot(room_nbr)
-    @possible_choices = @direction_service.possible_directions(@player.position)
-    @instruction = "Where to go? (#{@possible_choices.join('/')})"
     @screen = @map.draw
-    @action = :moving
   end
 
   def run
     help = "\\o/: YOU\n[ x ]: Unvisited room\n[   ]: Visited room\nType 'exit' to quit"
     refresh_screen
-    while input = Readline.readline("#{help}\n\n#{@screen}\n\n#{@instruction} ", true)
-      break if input == 'exit'
+    game_over = false
+    while input = Readline.readline("#{help}\n\n#{@screen}\n\n#{@action_handler.instruction} ", true)
+      break if input == 'exit' || game_over
 
-      handle_input(input) if @possible_choices.include?(input)
+      game_over = @action_handler.handle_input(input)
       refresh_screen
     end
   end
@@ -52,46 +48,12 @@ class Game
     @player = Player.new(@dungeon.first_room_position.clone, 'Undead')
     @weapon = Weapon.new(@dungeon.random_room_position([@player.position]).clone)
     @boss = Boss.new(@dungeon.random_room_position([@player.position, @weapon.position].clone))
-    @map = Map.new(@dungeon, @player.position, @boss.position, @weapon, :debug)
-  end
-
-  def handle_input(input)
-    handle_moving(input) if MOVING_INPUT.include?(input) && @action == :moving
-    handle_equipping(input) if CHOICE_INPUT.include?(input) && @action == :equipping
+    @map = Map.new(@dungeon, @player.position, @boss.position, @weapon, :normal)
+    @action_handler = ActionHandler.new(@direction_service, @player, @weapon, @boss, @dungeon)
   end
 
   def refresh_screen
     system('clear') || system('cls')
     @screen = @map.draw
-  end
-
-  def handle_equipping(input)
-    @possible_choices = @direction_service.possible_directions(@player.position)
-    if input == 'yes'
-      @instruction = "You can now kill the boss!\nWhere to go? (#{@possible_choices.join('/')})"
-      @weapon.equipped = true
-    else
-      @instruction = "#{@boss.name} will kick your ass for sure!\nWhere to go? (#{@possible_choices.join('/')})"
-    end
-    @action = :moving
-  end
-
-  def handle_moving(input)
-    @player.walk(input)
-    @dungeon.mark_room_as_visited(@player.position)
-    return if collision?
-
-    @possible_choices = @direction_service.possible_directions(@player.position)
-    @instruction = "Where to go? (#{@possible_choices.join('/')})"
-  end
-
-  def collision?
-    if @player.position == @weapon.position
-      @action = :equipping
-      @possible_choices = CHOICE_INPUT
-      @instruction = "You just found the #{@weapon.name}! Equip? (#{@possible_choices.join('/')})"
-    else
-      false
-    end
   end
 end
