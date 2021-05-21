@@ -9,9 +9,9 @@ RSpec.describe Map do
   let(:game_mode) { :normal }
   let(:dungeon) { Dungeon.new(room_nbr) }
   let(:player_position) { dungeon.rooms[0].position }
-  let(:weapon_position) { dungeon.rooms[1].position }
+  let(:weapon) { Weapon.new(dungeon.rooms[1].position) }
   let(:boss_position) { dungeon.rooms[2].position }
-  let(:map) { described_class.new(dungeon, player_position, boss_position, weapon_position, game_mode) }
+  let(:map) { described_class.new(dungeon, player_position, boss_position, weapon, game_mode) }
 
   describe '#draw' do
     subject(:draw) { map.draw }

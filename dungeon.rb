@@ -38,7 +38,7 @@ class Dungeon
 
   def random_room_position(positions_to_avoid)
     position = @rooms.map(&:position).sample
-    return position unless positions_to_avoid.include? positions_to_avoid
+    return position unless positions_to_avoid.include? position
 
     random_room_position(positions_to_avoid)
   end
