@@ -2,5 +2,4 @@
 
 require_relative 'game'
 
-game = Game.new
-game.start
+Game.start((ARGV.first || '10').to_i)

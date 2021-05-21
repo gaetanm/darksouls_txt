@@ -20,19 +20,19 @@ RSpec.describe DirectionService do
       it { is_expected.to eq 'right' }
     end
 
-    context 'when position is at the right of the current position' do
+    context 'when position is at the left of the current position' do
       let(:position) { Position.new(-1, 0) }
 
       it { is_expected.to eq 'left' }
     end
 
-    context 'when position is at the right of the current position' do
+    context 'when position is at the top of the current position' do
       let(:position) { Position.new(0, 1) }
 
       it { is_expected.to eq 'top' }
     end
 
-    context 'when position is at the right of the current position' do
+    context 'when position is at the bottom of the current position' do
       let(:position) { Position.new(0, -1) }
 
       it { is_expected.to eq 'bottom' }

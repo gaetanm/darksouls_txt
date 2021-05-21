@@ -9,20 +9,32 @@ require_relative 'weapon'
 require_relative 'direction_service'
 
 class Game
-  ROOMS_NBR = 10
   MOVING_INPUT = %w[right left top bottom].freeze
   CHOICE_INPUT = %w[yes no].freeze
 
-  def initialize
-    boot
+  def self.start(room_nbr)
+    return unless bootable?(room_nbr)
+
+    new(room_nbr).run
+  end
+
+  def self.bootable?(room_nbr)
+    return true if room_nbr.between?(5, 100)
+
+    puts 'Room number has to be between 5 and 100.'
+    false
+  end
+
+  def initialize(room_nbr)
+    boot(room_nbr)
     @possible_choices = @direction_service.possible_directions(@player.position)
     @instruction = "Where to go? (#{@possible_choices.join('/')})"
     @screen = @map.draw
     @action = :moving
   end
 
-  def start
-    help = '\\o/: YOU [ x ]: Unvisited room [   ]: Visited room'
+  def run
+    help = "\\o/: YOU\n[ x ]: Unvisited room\n[   ]: Visited room\nType 'exit' to quit"
     refresh_screen
     while input = Readline.readline("#{help}\n\n#{@screen}\n\n#{@instruction} ", true)
       break if input == 'exit'
@@ -34,8 +46,8 @@ class Game
 
   private
 
-  def boot
-    @dungeon = Dungeon.new(ROOMS_NBR)
+  def boot(room_nbr)
+    @dungeon = Dungeon.new(room_nbr)
     @direction_service = DirectionService.new(@dungeon)
     @player = Player.new(@dungeon.first_room_position.clone, 'Undead')
     @weapon = Weapon.new(@dungeon.random_room_position([@player.position]).clone)
