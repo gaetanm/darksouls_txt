@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require 'readline'
-require_relative 'dungeon'
-require_relative 'map'
-require_relative 'boss'
-require_relative 'player'
-require_relative 'weapon'
-require_relative 'direction_service'
-require_relative 'action_handler'
+require_relative '../models/dungeon'
+require_relative '../models/map'
+require_relative '../models/boss'
+require_relative '../models/player'
+require_relative '../models/weapon'
+require_relative '../engine/direction_service'
+require_relative '../engine/action_handler'
 
 class Game
   def self.start(room_nbr)

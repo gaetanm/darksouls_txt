@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require_relative '../game'
+require_relative '../spec_helper'
+require_relative '../../engine/game'
 
 RSpec.describe Game do
   let(:room_nbr) { 10 }

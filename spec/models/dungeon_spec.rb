@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require_relative '../dungeon'
+require_relative '../spec_helper'
+require_relative '../../models/dungeon'
 
 RSpec.describe Dungeon do
   let(:room_nbr) { 10 }

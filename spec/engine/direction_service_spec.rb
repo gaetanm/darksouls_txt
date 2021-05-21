@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require_relative '../position'
-require_relative '../direction_service'
-require_relative '../dungeon'
+require_relative '../spec_helper'
+require_relative '../../models/position'
+require_relative '../../engine/direction_service'
+require_relative '../../models/dungeon'
 
 RSpec.describe DirectionService do
   let(:room_nbr) { 2 }

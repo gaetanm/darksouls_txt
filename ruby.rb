@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'game'
+require_relative 'engine/game'
 
 Game.start((ARGV.first || '10').to_i)

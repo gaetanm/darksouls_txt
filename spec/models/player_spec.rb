@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require_relative '../player'
+require_relative '../spec_helper'
+require_relative '../../models/player'
 
 RSpec.describe Player do
   let(:position) { Position.new(0, 0) }

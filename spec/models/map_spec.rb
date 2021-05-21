@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require_relative '../map'
-require_relative '../dungeon'
+require_relative '../spec_helper'
+require_relative '../../models/map'
+require_relative '../../models/dungeon'
 
 RSpec.describe Map do
   let(:room_nbr) { 10 }

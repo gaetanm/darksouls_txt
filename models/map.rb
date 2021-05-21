@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'game'
+require_relative '../engine/game'
 
 class Map
   UNVISITED_ROOM_IMG = '[ x ]'
