@@ -6,9 +6,9 @@ require_relative 'room'
 class Dungeon
   attr_reader :rooms
 
-  def initialize(rooms_nbr)
+  def initialize(rooms_nbr, rooms = nil)
     @rooms_nbr = rooms_nbr
-    @rooms = []
+    @rooms = rooms || []
     generate_rooms
   end
 
@@ -46,12 +46,13 @@ class Dungeon
   private
 
   def generate_rooms
-    current_room_position = Position.new(0, 0)
-    @rooms_nbr.times do |room_id|
-      @rooms << Room.new(room_id, current_room_position)
-      current_room_position = generate_room_position(current_room_position) || find_position_from_existing_rooms
+    if @rooms.empty?
+      current_room_position = Position.new(0, 0)
+      @rooms_nbr.times do |room_id|
+        @rooms << Room.new(room_id, current_room_position)
+        current_room_position = generate_room_position(current_room_position) || find_position_from_existing_rooms
+      end
     end
-    # At the end because during room generation, a room can appear next to a room that was generated before
     connect_rooms
   end
 

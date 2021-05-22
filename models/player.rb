@@ -5,9 +5,13 @@ require_relative 'game_element'
 
 class Player < GameElement
   def fight(weapon_equipped)
-    return 'Yay you won!' if weapon_equipped
+    return true if weapon_equipped
 
-    rand(2).zero? ? 'YOU DIED!' : 'Yay you won!'
+    win_fight_success.zero?
+  end
+
+  def run
+    run_success.zero? || run_success == 1
   end
 
   def walk(direction)
@@ -21,5 +25,15 @@ class Player < GameElement
     when 'bottom'
       @position.y = position.y - 1
     end
+  end
+
+  private
+
+  def win_fight_success
+    rand(2)
+  end
+
+  def run_success
+    rand(3)
   end
 end

@@ -3,7 +3,7 @@ class ActionHandler
   CHOICE_INPUT = %w[yes no].freeze
   FIGHT_INPUT = %w[fight run].freeze
 
-  attr_reader :instruction
+  attr_reader :instruction, :action, :possible_choices
 
   def initialize(direction_service, player, weapon, boss, dungeon)
     @direction_service = direction_service
@@ -25,15 +25,18 @@ class ActionHandler
   private
 
   def handle_aggro(input)
-    if input == 'fight'
-      @instruction = @player.fight(@weapon.equipped)
+    case input
+    when 'fight'
+      @instruction = @player.fight(@weapon.equipped) ? 'Yay you won!' : "#{@boss.name} KILLED YOU! YOU DIED!"
       true
-    elsif false
-      @instruction = "That roll did not work... #{@boss.name} KILLED YOU! YOU DIED!"
-      true
-    else
-      moving_action("You lucky bastard!\n")
-      false
+    when 'run'
+      if @player.run
+        moving_action("You lucky bastard!\n")
+        false
+      else
+        @instruction = "That roll did not work... #{@boss.name} KILLED YOU! YOU DIED!"
+        true
+      end
     end
   end
 
@@ -48,6 +51,7 @@ class ActionHandler
 
   def handle_equipping(input)
     @possible_choices = @direction_service.possible_directions(@player.position)
+    @weapon.discovered = true
     if input == 'yes'
       @instruction = "You can now kill the boss!\nWhere to go? (#{@possible_choices.join('/')})"
       @weapon.equipped = true
@@ -70,6 +74,7 @@ class ActionHandler
   end
 
   def aggro_action
+    @boss.discovered = true
     @possible_choices = FIGHT_INPUT
     @instruction = "Holy shit! #{@boss.name} is here! (#{@possible_choices.join('/')})"
     @action = :aggro

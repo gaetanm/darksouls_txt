@@ -48,7 +48,7 @@ class Game
     @player = Player.new(@dungeon.first_room_position.clone, 'Undead')
     @weapon = Weapon.new(@dungeon.random_room_position([@player.position]).clone)
     @boss = Boss.new(@dungeon.random_room_position([@player.position, @weapon.position].clone))
-    @map = Map.new(@dungeon, @player.position, @boss.position, @weapon, :normal)
+    @map = Map.new(@dungeon, @player.position, @boss, @weapon)
     @action_handler = ActionHandler.new(@direction_service, @player, @weapon, @boss, @dungeon)
   end
 

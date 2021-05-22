@@ -7,7 +7,7 @@ RSpec.describe Dungeon do
   let(:room_nbr) { 10 }
   let(:dungeon) { described_class.new(room_nbr) }
 
-  describe '#initialize' do
+  describe '.initialize' do
     it 'generates the correct number of rooms' do
       expect(dungeon.rooms.size).to eq 10
     end
