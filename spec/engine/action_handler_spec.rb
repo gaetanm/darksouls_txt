@@ -28,10 +28,7 @@ RSpec.describe ActionHandler do
   describe '#handle_input' do
     subject(:handle_input) { action_handle.handle_input(input) }
 
-    before { allow(action_handle).to receive(:action).and_return(action) }
-
     describe 'moving' do
-      let(:action) { :moving }
       let(:input) { nil }
 
       it { expect(action_handle.instruction).to include('Where to go?') }
@@ -73,8 +70,6 @@ RSpec.describe ActionHandler do
     end
 
     describe 'equipping' do
-      let(:action) { :equipping }
-
       context 'when input is yes' do
         let(:input) { 'yes' }
 
@@ -87,7 +82,6 @@ RSpec.describe ActionHandler do
         it { expect(action_handle.instruction).to include('You can now kill the boss') }
         it { expect(action_handle.possible_choices).to eq(%w[left right]) }
         it { expect(weapon.equipped).to be true }
-        it { expect(handle_input).not_to be true }
       end
 
       context 'when input is no' do
@@ -102,13 +96,10 @@ RSpec.describe ActionHandler do
         it { expect(action_handle.instruction).to include('Artorias will kick your ass for sure!') }
         it { expect(action_handle.possible_choices).to eq(%w[left right]) }
         it { expect(weapon.equipped).to be false }
-        it { expect(handle_input).not_to be true }
       end
     end
 
     describe 'aggro' do
-      let(:action) { :equipping }
-
       before do
         action_handle.handle_input('right')
         action_handle.handle_input('right')
@@ -174,6 +165,32 @@ RSpec.describe ActionHandler do
 
           it { expect(action_handle.instruction).to include('That roll did not work... Artorias KILLED YOU! YOU DIED!') }
         end
+      end
+    end
+
+    describe 'game_over' do
+      let(:input) { 'run' }
+
+      before do
+        action_handle.handle_input('right')
+        action_handle.handle_input('right')
+        action_handle.handle_input('yes')
+        action_handle.handle_input('right')
+        allow(player).to receive(:run_success).and_return(2)
+        handle_input
+      end
+
+      it { expect(action_handle.instruction).to include('Want to restart?') }
+      it { expect(action_handle.possible_choices).to eq(%w[yes no]) }
+
+      context 'when the player wants to restart' do
+        before { action_handle.handle_input('yes') }
+
+        it { expect(action_handle.instruction).to include('Where to go?') }
+      end
+
+      context 'when the player does not want to restart' do
+        it { expect(action_handle.handle_input('no')).to eq :quit }
       end
     end
   end

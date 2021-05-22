@@ -31,12 +31,15 @@ class Game
   def run
     help = "\\o/: YOU\n[ x ]: Unvisited room\n[   ]: Visited room\nType 'exit' to quit"
     refresh_screen
-    action = nil
     while input = Readline.readline("#{help}\n\n#{@screen}\n\n#{@action_handler.instruction} ", true)
-      break if input == 'exit' || action == :quit
-
-      action = @action_handler.handle_input(input)
-      boot if action == :restart
+      case @action_handler.handle_input(input)
+      when :restart
+        boot
+      when :quit
+        break
+      else
+        break if input == 'exit'
+      end
       refresh_screen
     end
   end
