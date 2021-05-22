@@ -20,22 +20,32 @@ class ActionHandler
     handle_moving(input) if MOVING_INPUT.include?(input) && @action == :moving
     handle_equipping(input) if CHOICE_INPUT.include?(input) && @action == :equipping
     handle_aggro(input) if FIGHT_INPUT.include?(input) && @action == :aggro
+    handle_game_over(input) if CHOICE_INPUT.include?(input) && @action == :game_over
   end
 
   private
+
+  def handle_game_over(input)
+    if input == 'yes'
+      moving_action
+      :restart
+    else
+      :quit
+    end
+  end
 
   def handle_aggro(input)
     case input
     when 'fight'
       @instruction = @player.fight(@weapon.equipped) ? 'Yay you won!' : "#{@boss.name} KILLED YOU! YOU DIED!"
-      true
+      game_over_action(@instruction)
     when 'run'
       if @player.run
         moving_action("You lucky bastard!\n")
         false
       else
         @instruction = "That roll did not work... #{@boss.name} KILLED YOU! YOU DIED!"
-        true
+        game_over_action(@instruction)
       end
     end
   end
@@ -59,6 +69,12 @@ class ActionHandler
       @instruction = "#{@boss.name} will kick your ass for sure!\nWhere to go? (#{@possible_choices.join('/')})"
     end
     @action = :moving
+  end
+
+  def game_over_action(custom_instruction = nil)
+    @possible_choices = CHOICE_INPUT
+    @instruction = "#{custom_instruction}\nWant to restart? (#{@possible_choices.join('/')})"
+    @action = :game_over
   end
 
   def moving_action(custom_instruction = nil)

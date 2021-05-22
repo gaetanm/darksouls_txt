@@ -123,7 +123,6 @@ RSpec.describe ActionHandler do
           before { handle_input }
 
           it { expect(action_handle.instruction).to include('Yay you won!') }
-          it { expect(handle_input).to be true }
         end
 
         context 'when the weapon is not equipped' do
@@ -139,7 +138,6 @@ RSpec.describe ActionHandler do
             end
 
             it { expect(action_handle.instruction).to include('Artorias KILLED YOU! YOU DIED!') }
-            it { expect(handle_input).to be true }
           end
 
           context 'when the player wins the fight' do
@@ -150,7 +148,6 @@ RSpec.describe ActionHandler do
             end
 
             it { expect(action_handle.instruction).to include('Yay you won!') }
-            it { expect(handle_input).to be true }
           end
         end
       end
@@ -176,7 +173,6 @@ RSpec.describe ActionHandler do
           end
 
           it { expect(action_handle.instruction).to include('That roll did not work... Artorias KILLED YOU! YOU DIED!') }
-          it { expect(handle_input).to be true }
         end
       end
     end

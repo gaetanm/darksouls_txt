@@ -24,32 +24,34 @@ class Game
   end
 
   def initialize(room_nbr)
-    boot(room_nbr)
-    @screen = @map.draw
+    @room_nbr = room_nbr
+    boot
   end
 
   def run
     help = "\\o/: YOU\n[ x ]: Unvisited room\n[   ]: Visited room\nType 'exit' to quit"
     refresh_screen
-    game_over = false
+    action = nil
     while input = Readline.readline("#{help}\n\n#{@screen}\n\n#{@action_handler.instruction} ", true)
-      break if input == 'exit' || game_over
+      break if input == 'exit' || action == :quit
 
-      game_over = @action_handler.handle_input(input)
+      action = @action_handler.handle_input(input)
+      boot if action == :restart
       refresh_screen
     end
   end
 
   private
 
-  def boot(room_nbr)
-    @dungeon = Dungeon.new(room_nbr)
+  def boot
+    @dungeon = Dungeon.new(@room_nbr)
     @direction_service = DirectionService.new(@dungeon)
     @player = Player.new(@dungeon.first_room_position.clone, 'Undead')
     @weapon = Weapon.new(@dungeon.random_room_position([@player.position]).clone)
     @boss = Boss.new(@dungeon.random_room_position([@player.position, @weapon.position].clone))
     @map = Map.new(@dungeon, @player.position, @boss, @weapon)
     @action_handler = ActionHandler.new(@direction_service, @player, @weapon, @boss, @dungeon)
+    @screen = @map.draw
   end
 
   def refresh_screen
